@@ -1,1 +1,1 @@
-# cpu-info
+# PC INFO
