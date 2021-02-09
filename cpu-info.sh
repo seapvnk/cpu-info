@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# yad required
+command -v yad >/dev/null 2>&1 || { echo >&2 "yad package required but it is not installed.  Aborting."; exit 99; }
+
 # generate a random filename
 tmp_file=$(openssl rand -base64 32 | tr -dc A-Za-z0-9 && echo ".html")
 
@@ -20,6 +23,9 @@ echo "<body style='
         width: 100%;
         font-family: monospace;
     '>" >> $tmp_file
+
+# refresh script
+echo "<script>setTimeout(function() { window.location.reload() }, 500)</script>" >> $tmp_file
 
 # window title
 echo "<h1 align=center> Computer info </h1>" >> $tmp_file
@@ -92,9 +98,9 @@ echo "</div>" >> $tmp_file
 echo "</body>" >> $tmp_file
 
 # create the gui
-zenity --title "CPU INFO" --text-info --html --filename="$tmp_file" --width=550 --height=400
+yad -tail --title "CPU INFO" --html --uri="./$tmp_file" --monitor --width=550 --height=400 --browser
 
 # delete files
 rm $cpu_info
 rm $mem_info
-rm $tmp_file 
+rm $tmp_file
