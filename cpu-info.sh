@@ -93,12 +93,16 @@ function create_gui {
 function update_gui {
     while true; do
         create_gui
+        proc=$(ps | grep yad)
+
+        if [ -z "$proc" ]
+        then
+            rm $cpu_info $mem_info $tmp_file $html
+            exit
+        fi
     done
 }
 
 # create the gui
 create_gui
-yad -tail --title "CPU INFO" --html --uri="./$html" --uri-handler=";" --monitor --width=550 --height=400 --browser & update_gui
-
-# delete files
-rm $cpu_info $mem_info $tmp_file $html
+yad -tail --title "CPU INFO" --html --uri="./$html" --uri-handler=";" --monitor --width=550 --height=400 --browser --autokill & update_gui
