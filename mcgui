@@ -3,7 +3,7 @@
 # yad required
 command -v yad >/dev/null 2>&1 || { echo >&2 "yad package required but it is not installed.  Aborting."; exit 99; }
 
-# create temp files
+# create output files
 html=$(openssl rand -base64 32 | tr -dc A-Za-z0-9 && echo ".html")
 tmp_file=$(openssl rand -base64 32 | tr -dc A-Za-z0-9 && echo ".html")
 mem_info=$(openssl rand -base64 32 | tr -dc A-Za-z0-9 && echo ".txt")
@@ -11,6 +11,7 @@ cpu_info=$(openssl rand -base64 32 | tr -dc A-Za-z0-9 && echo ".txt")
 
 touch $html $tmp_file $mem_info $cpu_info
 
+# function to render GUI
 function create_gui {
     # open body
     echo "<body style='
@@ -69,6 +70,8 @@ function create_gui {
         echo "<br>" >> $tmp_file
     done
 
+
+    # free memory x total memory graphic
     mem_total=$(cat $mem_info | grep "MemTotal" | grep "[0-9]*" -o)
     mem_free=$(cat $mem_info | grep "MemFree" | grep "[0-9]*" -o)
 
@@ -81,20 +84,23 @@ function create_gui {
         echo "<div style='padding:1rem; width: $mem_total_percentage%; height: 40px; background: red'></div>" >> $tmp_file
     echo "</div>" >> $tmp_file
 
+    # screen update script
     echo "<script>setTimeout(function() { location.reload() }, 500)</script>" >> $tmp_file
+    
     # close body
     echo "</body>" >> $tmp_file
 
     cat $tmp_file > $html
-
     sleep 1
 }
 
+# function to update GUI
 function update_gui {
     while true; do
         create_gui
         proc=$(ps | grep yad)
 
+        # if window is closed remove temp files and stop process
         if [ -z "$proc" ]
         then
             rm $cpu_info $mem_info $tmp_file $html
@@ -103,6 +109,5 @@ function update_gui {
     done
 }
 
-# create the gui
 create_gui
-yad -tail --title "CPU INFO" --html --uri="./$html" --uri-handler=";" --monitor --width=550 --height=400 --browser --autokill & update_gui
+yad -tail --title "MC Gui" --html --uri="./$html" --uri-handler=";" --monitor --width=550 --height=400 --browser --autokill & update_gui
