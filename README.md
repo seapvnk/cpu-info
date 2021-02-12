@@ -4,7 +4,7 @@
 </p>
 
 <h1 align="center">MC GUI</h1>
-<p align="center">Memory & Computer Graphical Interface. A bash based client to display memory and computer information</p>
+<p align="center">Memory & Computer Graphical User Interface. A bash based client to display memory and computer information</p>
 
 ## Getting Started
 
